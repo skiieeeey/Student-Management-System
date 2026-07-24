@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Student Management System</title>
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/dashboard-style.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="d-flex" id="wrapper">
+
+    <!-- Insert Reusable Sidebar (Pass active page name to highlight link) -->
+    <div th:replace="~{fragments/layouts :: sidebar('dashboard')}"></div>
+
+    <!-- Page Content Wrapper -->
+    <div id="page-content-wrapper" class="d-flex flex-column min-vh-100 bg-light-subtle">
+
+        <!-- Insert Reusable Navbar -->
+        <nav th:replace="~{fragments/layouts :: navbar}"></nav>
+
+        <!-- Main Workspace -->
+        <main class="container-fluid px-4 py-4 flex-grow-1">
+
+            <!-- Page Title Banner -->
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-2">
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">Dashboard Overview</h3>
+                    <p class="text-muted small mb-0">Welcome back, Admin! Here is what's happening today.</p>
+                </div>
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill align-self-start align-self-sm-auto">
+                        <i class="bi bi-circle-fill fs-6 me-1 text-success"></i> System Active
+                    </span>
+            </div>
+
+            <!-- Modern Stats Cards Grid -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm rounded-3 h-100 stat-card">
+                        <div class="card-body p-3-5">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Total Students</span>
+                                    <h3 class="fw-bold text-dark my-1">1,250</h3>
+                                    <span class="text-success small fw-medium"><i class="bi bi-arrow-up-short"></i>+12% this month</span>
+                                </div>
+                                <div class="stat-icon bg-primary-subtle text-primary rounded-3 p-3">
+                                    <i class="bi bi-people fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm rounded-3 h-100 stat-card">
+                        <div class="card-body p-3-5">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Active Courses</span>
+                                    <h3 class="fw-bold text-dark my-1">42</h3>
+                                    <span class="text-muted small">4 departments</span>
+                                </div>
+                                <div class="stat-icon bg-success-subtle text-success rounded-3 p-3">
+                                    <i class="bi bi-book fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm rounded-3 h-100 stat-card">
+                        <div class="card-body p-3-5">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Top Course</span>
+                                    <h3 class="fw-bold text-dark my-1">CS101</h3>
+                                    <span class="text-muted small">310 Enrolled</span>
+                                </div>
+                                <div class="stat-icon bg-warning-subtle text-warning-emphasis rounded-3 p-3">
+                                    <i class="bi bi-trophy fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card border-0 shadow-sm rounded-3 h-100 stat-card">
+                        <div class="card-body p-3-5">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">New Registrations</span>
+                                    <h3 class="fw-bold text-dark my-1">37</h3>
+                                    <span class="text-success small fw-medium"><i class="bi bi-arrow-up-short"></i>+5 today</span>
+                                </div>
+                                <div class="stat-icon bg-info-subtle text-info-emphasis rounded-3 p-3">
+                                    <i class="bi bi-person-plus fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Registrations Table -->
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between px-4">
+                    <h6 class="fw-bold text-dark mb-0">
+                        <i class="bi bi-clock-history me-2 text-primary"></i>Recent Registrations
+                    </h6>
+                    <a th:href="@{/students}" class="btn btn-sm btn-light border text-secondary fw-medium">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light border-bottom border-top-0">
+                            <tr class="text-uppercase text-muted fs-7">
+                                <th class="ps-4">Student ID</th>
+                                <th>Name</th>
+                                <th>Course</th>
+                                <th>Enroll Date</th>
+                                <th>Duration</th>
+                                <th class="pe-4 text-end">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="ps-4 fw-semibold text-secondary">#STU001</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-sm bg-light text-primary rounded-circle fw-bold small d-flex align-items-center justify-content-center" style="width:28px; height:28px;">JD</div>
+                                        <span class="fw-semibold text-dark">John Doe</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill">Computer Science</span></td>
+                                <td class="text-muted">2023-10-05</td>
+                                <td class="text-muted">6 Months</td>
+                                <td class="pe-4 text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-light border text-secondary" title="View"><i class="bi bi-eye"></i></button>
+                                        <button class="btn btn-light border text-primary" title="Edit"><i class="bi bi-pencil"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 fw-semibold text-secondary">#STU002</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-sm bg-light text-success rounded-circle fw-bold small d-flex align-items-center justify-content-center" style="width:28px; height:28px;">JS</div>
+                                        <span class="fw-semibold text-dark">Jane Smith</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Mathematics</span></td>
+                                <td class="text-muted">2023-10-02</td>
+                                <td class="text-muted">5 Months</td>
+                                <td class="pe-4 text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-light border text-secondary" title="View"><i class="bi bi-eye"></i></button>
+                                        <button class="btn btn-light border text-primary" title="Edit"><i class="bi bi-pencil"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Insert Reusable Footer -->
+        <footer th:replace="~{fragments/layouts :: footer}"></footer>
+    </div>
+</div>
+
+<!-- Insert Reusable Scripts -->
+<th:block th:replace="~{fragments/layouts :: scripts}"></th:block>
+</body>
+
+</html>
