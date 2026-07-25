@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="courseCode" class="form-label">Course Code</label>
-                                    <input th:field="*{courseCode}" type="text" class="form-control" id="courseCode" placeholder="e.g. WEB101"
+                                    <input th:field="*{courseCode}" th:classappend="${#fields.hasErrors('courseCode')} ? 'is-invalid' : ''" type="text" class="form-control" id="courseCode" placeholder="e.g. WEB101"
                                         required>
                                     <p style="color:red" th:if="${#fields.hasErrors('courseCode')}"
                                          th:errors="*{courseCode}"></p>

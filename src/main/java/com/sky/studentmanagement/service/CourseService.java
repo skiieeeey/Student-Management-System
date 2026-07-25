@@ -1,6 +1,7 @@
 package com.sky.studentmanagement.service;
 
 import com.sky.studentmanagement.dto.CourseDto;
+import com.sky.studentmanagement.dto.CourseModifyDto;
 import com.sky.studentmanagement.exception.CustomException;
 import org.springframework.data.domain.Page;
 
@@ -12,7 +13,11 @@ public interface CourseService {
 
     Page<CourseDto> getAllCourses(int page, int size);
 
-//    CourseDto getAllCourses();
+    CourseDto getCourseById(Long id);
 
     boolean existByCourseCode(String courseCode);
+
+    boolean existByCourseCodeAndIdNot(String courseCode, Long id);
+
+    CourseDto editCourseById(CourseModifyDto course);
 }
