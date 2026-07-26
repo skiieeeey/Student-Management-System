@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management - Student Management System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/dashboard-style.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="d-flex" id="wrapper">
+
+    <!-- Reusable Sidebar Fragment (Passing 'students' active indicator) -->
+    <div th:replace="~{fragments/layouts :: sidebar('students')}"></div>
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav th:replace="~{fragments/layouts :: navbar}"></nav>
+
+        <div class="container-fluid px-4 py-4">
+
+            <!-- Top Header Action Row matching Course Page structure -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">Student Management</h3>
+                    <p class="text-muted small mb-0">Manage student information.</p>
+                </div>
+                <a th:href="@{/student/add}" class="btn btn-primary d-flex align-items-center gap-1 shadow-sm align-self-start align-self-sm-auto">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Add New Student</span>
+                </a>
+            </div>
+
+            <!-- Optional Flash Alert for modification feedback notifications -->
+            <div th:if="${message}" class="alert-box alert-success fade-out" role="alert" th:text="${message}"></div>
+
+            <!-- Centralized Roster Data Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 fw-bold text-primary">
+                        <i class="bi bi-table me-1"></i> Student List
+                    </h6>
+                </div>
+
+                <div class="card-body p-0">
+                    <!-- Table renders strictly if student content exists -->
+                    <div class="table-responsive" th:if="${students != null && !students.content.isEmpty()}">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-secondary small text-uppercase">
+                            <tr>
+                                <th class="ps-4" style="width: 10%">ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th class="pe-4 text-end" style="width: 15%">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody class="border-top-0">
+                            <tr th:each="student : ${students.content}">
+                                <!-- Row ID Column -->
+                                <td th:text="${student.id}" class="ps-4 fw-semibold text-secondary"></td>
+
+                                <!-- Name Column -->
+                                <td>
+                                    <span th:text="${student.firstName} + ' ' + ${student.lastName}" class="fw-bold text-dark"></span>
+                                </td>
+
+                                <!-- Email Column -->
+                                <td>
+                                    <span th:text="${student.email}" class="text-muted"></span>
+                                </td>
+
+                                <!-- Phone Column -->
+                                <td>
+                                    <span th:text="${student.phone != null ? student.phone : 'N/A'}" class="fw-semibold text-dark"></span>
+                                </td>
+
+                                <!-- Actions Button Alignment Panel -->
+                                <td class="pe-4 text-end">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{/student/{id}(id=${student.id})}" class="btn btn-light border text-secondary" title="View Student Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/student/{id}/edit(id=${student.id})}" class="btn btn-light border text-primary" title="Edit Student">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Clean Empty-State Container if collection data is missing -->
+                    <div th:if="${students == null || students.content.isEmpty()}" class="text-center py-5">
+                        <div class="text-muted display-6"><i class="bi bi-person-x"></i></div>
+                        <h5 class="mt-2 text-secondary">No records found</h5>
+                        <p class="text-muted small mb-0">There are no active student profiles saved in the management grid layout.</p>
+                    </div>
+                </div>
+
+                <!-- Card Pagination Footer matching Course Page math execution mechanics -->
+                <div class="card-footer bg-white border-top py-3 px-4" th:if="${students != null && !students.content.isEmpty()}">
+                    <div th:object="${students}" class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2">
+
+                        <!-- Safe Entry Matrix Summary Text Strings -->
+                        <span th:if="${students.totalElements > 0}" class="small text-muted">
+                            Showing <span th:text="*{number * size + 1}" class="text-dark"></span> to
+                            <span th:text="*{number * size + numberOfElements}" class="text-dark"></span> of
+                            <span th:text="*{totalElements}" class="text-dark"></span> entries
+                        </span>
+
+                        <span th:if="${students.totalElements == 0}" class="small text-muted">
+                            No entries found
+                        </span>
+
+                        <!-- Directory Multi-Page Indicator Block Links -->
+                        <nav th:if="${students.totalPages > 1}" aria-label="Student database directory navigation controller">
+                            <ul class="pagination pagination-sm mb-0">
+                                <!--Previous Page Button-->
+                                <li th:classappend="${students.hasPrevious()} ? '' : 'disabled'" class="page-item">
+                                    <a class="page-link" th:href="@{/student/list(page=${students.number - 1}, size=${students.size})}">Previous</a>
+                                </li>
+
+                                <!--Dynamic Numerical Selection Range Loop-->
+                                <li th:each="i : ${#numbers.sequence(0, students.totalPages - 1)}"
+                                    th:classappend="${i == students.number} ? 'active'" class="page-item">
+                                    <a class="page-link"
+                                       th:href="@{/student/list(page=${i}, size=${students.size})}"
+                                       th:text="${i + 1}">1</a>
+                                </li>
+
+                                <!--Next Page Button-->
+                                <li th:classappend="${students.hasNext()} ? '' : 'disabled'" class="page-item">
+                                    <a class="page-link" th:href="@{/student/list(page=${students.number + 1}, size=${students.size})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Reusable Base Structural Sticky Footer Hook -->
+        <footer th:replace="~{fragments/layouts :: footer}"></footer>
+    </div>
+</div>
+
+<!-- Essential Engine Layout Script Rendering Bundles -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<th:block th:replace="~{fragments/layouts :: scripts}"></th:block>
+</body>
+
+</html>

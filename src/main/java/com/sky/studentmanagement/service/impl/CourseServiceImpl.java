@@ -99,7 +99,7 @@ public class CourseServiceImpl implements CourseService {
 
         courseRepo.save(course);
 
-        return new CourseDto().builder()
+        return CourseDto.builder()
                 .id(course.getId())
                 .courseName(course.getCourseName())
                 .courseCode(course.getCourseCode())
