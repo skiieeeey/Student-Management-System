@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students Enrolled in Courses - Student Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/dashboard-style.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/layouts :: sidebar('enrolled-students')}"></div>
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav th:replace="~{fragments/layouts :: navbar}"></nav>
+
+        <div class="container-fluid px-4 py-4">
+            <!-- Header Action Row -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">Students Enrolled in Courses</h3>
+                    <p class="text-muted small mb-0">Track student coverage, fees, and quick access to details.</p>
+                </div>
+                <a th:href="@{/enrollment/add}" class="btn btn-primary d-flex align-items-center gap-1 shadow-sm align-self-start align-self-sm-auto">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Enroll Student</span>
+                </a>
+            </div>
+
+            <!-- Flash Message Notification -->
+            <div th:if="${message}" class="alert-box alert-success fade-out" role="alert" th:text="${message}"></div>
+
+            <!-- Centralized Roster Data Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 fw-bold text-primary">
+                        <i class="bi bi-table me-1"></i> Enrolled Students
+                    </h6>
+                </div>
+
+                <div class="card-body p-0">
+                    <!-- Table renders strictly if enrollment content exists -->
+                    <div class="table-responsive" th:if="${enrollments != null && !enrollments.content.isEmpty()}">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-secondary small text-uppercase">
+                            <tr>
+                                <th class="ps-4" style="width: 10%">ID</th>
+                                <th>Student Name</th>
+                                <th>Email</th>
+                                <th>Courses Count</th>
+                                <th>Total Fee</th>
+                                <th class="pe-4 text-end" style="width: 10%">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody class="border-top-0">
+                            <tr th:each="enrollment : ${enrollments.content}">
+                                <!-- ID Column -->
+                                <td th:text="${enrollment.id}" class="ps-4 fw-semibold text-secondary"></td>
+
+                                <!-- Name Column -->
+                                <td>
+                                    <span th:text="${enrollment.firstName} + ' ' + ${enrollment.lastName}" class="fw-bold text-dark"></span>
+                                </td>
+
+                                <!-- Email Column -->
+                                <td>
+                                    <span th:text="${enrollment.email}" class="text-muted"></span>
+                                </td>
+
+                                <!-- Courses Count Column -->
+                                <td>
+                                    <span th:text="${enrollment.coursesCount}" class="fw-semibold text-dark"></span>
+                                </td>
+
+                                <!-- Total Fee Column formatted with commas -->
+                                <td>
+                                    <span th:text="'&#8377;' + ${#numbers.formatDecimal(enrollment.totalFee, 1, 'COMMA', 2, 'POINT')}" class="fw-semibold text-dark"></span>
+                                </td>
+
+                                <!-- View Action Button -->
+                                <td class="pe-4 text-end">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{/enrollment/{id}(id=${enrollment.id})}" class="btn btn-light border text-secondary" title="View Enrollment Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty-State Container if enrollment collection data is missing -->
+                    <div th:if="${enrollments == null || enrollments.content.isEmpty()}" class="text-center py-5">
+                        <div class="text-muted display-6"><i class="bi bi-journal-x"></i></div>
+                        <h5 class="mt-2 text-secondary">No records found</h5>
+                        <p class="text-muted small mb-0">There are no active course enrollment profiles saved in the database.</p>
+                    </div>
+                </div>
+
+                <!-- Card Pagination Footer -->
+                <div class="card-footer bg-white border-top py-3 px-4" th:if="${enrollments != null && !enrollments.content.isEmpty()}">
+                    <div th:object="${enrollments}" class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2">
+
+                        <!-- Safe Entry Summary Text -->
+                        <span th:if="${enrollments.totalElements > 0}" class="small text-muted">
+                                Showing <span th:text="*{number * size + 1}" class="text-dark"></span> to
+                                <span th:text="*{number * size + numberOfElements}" class="text-dark"></span> of
+                                <span th:text="*{totalElements}" class="text-dark"></span> entries
+                            </span>
+
+                        <span th:if="${enrollments.totalElements == 0}" class="small text-muted">
+                                No entries found
+                            </span>
+
+                        <!-- Multi-Page Pagination Controller -->
+                        <nav th:if="${enrollments.totalPages > 1}" aria-label="Enrollment database directory navigation controller">
+                            <ul class="pagination pagination-sm mb-0">
+                                <!-- Previous Page Button -->
+                                <li th:classappend="${enrollments.hasPrevious()} ? '' : 'disabled'" class="page-item">
+                                    <a class="page-link" th:href="@{/enrollment/list(page=${enrollments.number - 1}, size=${enrollments.size})}">Previous</a>
+                                </li>
+
+                                <!-- Numerical Selection Loop -->
+                                <li th:each="i : ${#numbers.sequence(0, enrollments.totalPages - 1)}"
+                                    th:classappend="${i == enrollments.number} ? 'active'" class="page-item">
+                                    <a class="page-link"
+                                       th:href="@{/enrollment/list(page=${i}, size=${enrollments.size})}"
+                                       th:text="${i + 1}">1</a>
+                                </li>
+
+                                <!-- Next Page Button -->
+                                <li th:classappend="${enrollments.hasNext()} ? '' : 'disabled'" class="page-item">
+                                    <a class="page-link" th:href="@{/enrollment/list(page=${enrollments.number + 1}, size=${enrollments.size})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reusable Base Structural Sticky Footer Hook -->
+        <footer th:replace="~{fragments/layouts :: footer}"></footer>
+    </div>
+</div>
+
+<!-- Essential Scripts Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', event => {
+        const sidebarToggle = document.body.querySelector('#sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', event => {
+                event.preventDefault();
+                document.body.classList.toggle('sb-sidenav-toggled');
+            });
+        }
+    });
+</script>
+</body>
+
+</html>

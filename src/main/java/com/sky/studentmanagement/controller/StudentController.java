@@ -1,7 +1,5 @@
 package com.sky.studentmanagement.controller;
 
-import com.sky.studentmanagement.dto.CourseDto;
-import com.sky.studentmanagement.dto.CourseModifyDto;
 import com.sky.studentmanagement.dto.StudentDto;
 import com.sky.studentmanagement.dto.StudentModifyDto;
 import com.sky.studentmanagement.exception.CustomException;
@@ -11,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -64,13 +61,6 @@ public class StudentController {
             });
             return "add-student";
         }
-
-//        if(studentService.existByEmailAndPhoneAndIdNot(student.getEmail(), student.getPhone(), student.getId())){
-//            log.info("Put /course/{}/edit - page return because student exists with the given email and phone.", student.getId());
-//            result.rejectValue("email", "student.email.exists");
-//            result.rejectValue("phone", "student.phone.exists");
-//            return "add-student";
-//        }
 
         if(studentService.existsByEmailAndIdNot(student.getEmail(), student.getId())){
             log.info("Put /course/{}/edit - page return because student exists with the given email.", student.getId());
@@ -125,14 +115,6 @@ public class StudentController {
             student.setId(id);
             return "edit-student";
         }
-
-//        if(studentService.existByEmailAndPhoneAndIdNot(student.getEmail(), student.getPhone(), id)){
-//            log.info("Put /course/{}/edit - page return because student exists with the given email and phone.", id);
-//            student.setId(id);
-//            result.rejectValue("email", "student.email.exists");
-//            result.rejectValue("phone", "student.phone.exists");
-//            return "edit-student";
-//        }
 
         if(studentService.existsByEmailAndIdNot(student.getEmail(), id)){
             log.info("Put /course/{}/edit - page return because student exists with the given email.", id);

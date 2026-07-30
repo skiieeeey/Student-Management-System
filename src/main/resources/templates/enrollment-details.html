@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment Details - Student Management System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/dashboard-style.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="d-flex" id="wrapper">
+
+    <!-- Reusable Sidebar Fragment -->
+    <div th:replace="~{fragments/layouts :: sidebar('enrollment-details')}"></div>
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav th:replace="~{fragments/layouts :: navbar}"></nav>
+
+        <div class="container-fluid px-4 py-4">
+
+            <!-- Top Header Action Row matching standard dashboard layout -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">Enrollment Details</h3>
+                    <p class="text-muted small mb-0">Overview of student profile, enrolled courses, and fee breakdown.</p>
+                </div>
+                <a th:href="@{/enrollment/list}" class="btn btn-outline-secondary d-flex align-items-center gap-1 shadow-sm align-self-start align-self-sm-auto">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Back to Enrolled Students</span>
+                </a>
+            </div>
+
+            <!-- Optional Flash Alert -->
+            <div th:if="${message}" class="alert-box alert-success fade-out" role="alert" th:text="${message}"></div>
+
+            <div class="row g-4">
+                <!-- Left Column: Student Information & Summary Card -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="m-0 fw-bold text-primary">
+                                <i class="bi bi-person-badge me-1"></i> Student Information
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="text-muted small d-block">Student Name</label>
+                                <span class="fw-bold text-dark fs-6" th:text="${enrollment.firstName + ' ' + enrollment.lastName}">John Doe</span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted small d-block">Email Address</label>
+                                <span class="text-secondary" th:text="${enrollment.email}">john.doe@example.com</span>
+                            </div>
+                            <hr class="text-muted opacity-25">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted small">Total Courses</span>
+                                <span class="fw-semibold text-dark" th:text="${enrollment.coursesCount}">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted small">Total Fee</span>
+                                <span class="fw-bold text-dark" th:text="'&#8377;' + ${#numbers.formatDecimal(enrollment.totalFee, 1, 'COMMA', 2, 'POINT')}">&#8377;0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Enrolled Courses Table Card -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="m-0 fw-bold text-primary">
+                                <i class="bi bi-journal-check me-1"></i> Enrolled Courses
+                            </h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <!-- Table Renders strictly if course data exists -->
+                            <div class="table-responsive" th:if="${enrollment.courseJsonList != null and !enrollment.courseJsonList.isEmpty()}">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light text-secondary small text-uppercase">
+                                    <tr>
+                                        <th class="ps-4" style="width: 35%">Course Name</th>
+                                        <th>Description</th>
+                                        <th class="pe-4 text-end" style="width: 20%">Fee</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="border-top-0">
+                                    <tr th:each="course : ${enrollment.courseJsonList}">
+                                        <!-- Course Name Column -->
+                                        <td class="ps-4">
+                                            <span class="fw-bold text-dark" th:text="${course.courseName}">Java Programming</span>
+                                        </td>
+                                        <!-- Description Column -->
+                                        <td>
+                                            <span class="text-muted small" th:text="${course.description != null ? course.description : 'N/A'}">Course description</span>
+                                        </td>
+                                        <!-- Fee Column -->
+                                        <td class="pe-4 text-end">
+                                            <span class="fw-semibold text-dark" th:text="'&#8377;' + ${#numbers.formatDecimal(course.fee, 1, 'COMMA', 2, 'POINT')}">&#8377;0.00</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <!-- Table Total Footer -->
+                                    <tfoot class="table-light border-top">
+                                    <tr>
+                                        <td colspan="2" class="ps-4 text-end fw-bold text-secondary">Total Fee:</td>
+                                        <td class="pe-4 text-end fw-bold text-dark" th:text="'&#8377;' + ${#numbers.formatDecimal(enrollment.totalFee, 1, 'COMMA', 2, 'POINT')}">&#8377;0.00</td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <!-- Clean Empty-State Container if no courses registered -->
+                            <div th:if="${enrollment.courseJsonList == null or enrollment.courseJsonList.isEmpty()}" class="text-center py-5">
+                                <div class="text-muted display-6"><i class="bi bi-journal-x"></i></div>
+                                <h5 class="mt-2 text-secondary">No courses registered</h5>
+                                <p class="text-muted small mb-0">There are no courses currently associated with this student enrollment record.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- Reusable Base Structural Sticky Footer Hook -->
+        <footer th:replace="~{fragments/layouts :: footer}"></footer>
+    </div>
+</div>
+
+<!-- Essential Engine Layout Script Rendering Bundles -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<th:block th:replace="~{fragments/layouts :: scripts}"></th:block>
+</body>
+
+</html>

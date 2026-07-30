@@ -113,6 +113,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(readOnly = true)
     public CourseDto getCourseById(Long id){
+        logger.info("View course by ID service called for ID: {}", id);
         CourseDto course = courseRepo.findById(id)
                 .map(c -> new CourseDto(c.getId(), c.getCourseName(), c.getCourseCode(), c.getDuration(), c.isActive() ,c.getFee(), c.getDescription()))
                 .orElseThrow(() -> new RuntimeException("No Course Found"));
