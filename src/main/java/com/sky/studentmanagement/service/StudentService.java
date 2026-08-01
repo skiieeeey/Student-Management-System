@@ -5,6 +5,8 @@ import com.sky.studentmanagement.dto.StudentModifyDto;
 import com.sky.studentmanagement.exception.CustomException;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface StudentService {
 
     Page<StudentDto> getAllStudents(int page, int size);
@@ -20,4 +22,6 @@ public interface StudentService {
     boolean existsByEmailAndIdNot(String email, Long id);
 
     boolean existsByPhoneAndIdNot(String phone, Long id);
+
+    List<StudentDto> getAllStudentsList();
 }

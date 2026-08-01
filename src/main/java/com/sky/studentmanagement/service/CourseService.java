@@ -3,7 +3,9 @@ package com.sky.studentmanagement.service;
 import com.sky.studentmanagement.dto.CourseDto;
 import com.sky.studentmanagement.dto.CourseModifyDto;
 import com.sky.studentmanagement.exception.CustomException;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -20,4 +22,6 @@ public interface CourseService {
     boolean existByCourseCodeAndIdNot(String courseCode, Long id);
 
     CourseDto editCourseById(CourseModifyDto course);
+
+    List<CourseDto> getAllCoursesList();
 }

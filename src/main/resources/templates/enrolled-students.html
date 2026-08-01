@@ -32,9 +32,6 @@
                 </a>
             </div>
 
-            <!-- Flash Message Notification -->
-            <div th:if="${message}" class="alert-box alert-success fade-out" role="alert" th:text="${message}"></div>
-
             <!-- Centralized Roster Data Card -->
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3">
@@ -42,6 +39,12 @@
                         <i class="bi bi-table me-1"></i> Enrolled Students
                     </h6>
                 </div>
+
+                <!-- Optional Flash Alert for modification feedback notifications -->
+                <div th:if="${message}" class="alert-box alert-success fade-out" role="alert" th:text="${message}"></div>
+                <!-- Optional Flash Alert for modification feedback notifications -->
+                <div th:if="${error}" class="alert-box alert-error fade-out" role="alert" th:text="${error}"></div>
+
 
                 <div class="card-body p-0">
                     <!-- Table renders strictly if enrollment content exists -->

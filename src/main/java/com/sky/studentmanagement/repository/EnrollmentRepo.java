@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface EnrollmentRepo extends JpaRepository<Enrollment, Long> {
 
@@ -44,4 +46,6 @@ public interface EnrollmentRepo extends JpaRepository<Enrollment, Long> {
                     "GROUP BY s.id, s.first_name, s.last_name, s.email",
             nativeQuery = true)
     EnrollmentViewProjection findByStudentSummaryById(@Param("student_id") Long id);
+
+    List<Enrollment> findByStudentId(Long studentId);
 }

@@ -5,6 +5,9 @@ import com.sky.studentmanagement.dto.EnrollmentCourseDto;
 import com.sky.studentmanagement.dto.EnrollmentDto;
 import com.sky.studentmanagement.dto.EnrollmentViewDto;
 import com.sky.studentmanagement.dto.projections.EnrollmentViewProjection;
+import com.sky.studentmanagement.model.Courses;
+import com.sky.studentmanagement.model.Enrollment;
+import com.sky.studentmanagement.model.Students;
 import com.sky.studentmanagement.repository.CourseRepo;
 import com.sky.studentmanagement.repository.EnrollmentRepo;
 import com.sky.studentmanagement.repository.StudentRepo;
@@ -21,6 +24,8 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -89,5 +94,32 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             logger.error("Error occurred at view enrollment by ID service for ID: {} "+e.getMessage(), id);
             throw new RuntimeException("Error processing student snapshot.", e);
         }
+    }
+
+    @Override
+    @Transactional
+    public void enrollStudent(Long studentId, List<Long> courseIds) {
+        Students student = studentRepo.findById(studentId)
+                .orElseThrow(() -> new NoSuchElementException("Invalid student ID."));
+
+        List<Courses> coursesToEnroll = courseRepo.findAllById(courseIds);
+
+        List<Enrollment> pastEnrollments = enrollmentRepo.findByStudentId(studentId);
+
+        List<Long> alreadyEnrolledCourseIds = pastEnrollments.stream()
+                .map(enrollment -> enrollment.getCourse().getId())
+                .toList();
+
+        for(Courses newCourse : coursesToEnroll){
+            if(alreadyEnrolledCourseIds.contains(newCourse.getId())){
+                throw new IllegalStateException("Student is already enrolled in: "+ newCourse.getCourseName());
+            }
+            Enrollment enrollment = new Enrollment();
+            enrollment.setStudent(student);
+            enrollment.setCourse(newCourse);
+            enrollmentRepo.save(enrollment);
+        }
+
+
     }
 }

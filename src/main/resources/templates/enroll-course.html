@@ -11,147 +11,228 @@
 </head>
 
 <body>
-    <div class="d-flex" id="wrapper">
-        <!-- Sidebar -->
-        <div th:replace="~{fragments/layouts :: sidebar('enroll-course')}"></div>
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/layouts :: sidebar('enroll-course')}"></div>
 
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-            <nav th:replace="~{fragments/layouts :: navbar}"></nav>
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav th:replace="~{fragments/layouts :: navbar}"></nav>
 
-            <div class="container-fluid px-4 py-4">
-                <div class="bg-primary text-white rounded-3 p-4 mb-4">
-                    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
-                        <div>
-                            <h2 class="mb-1">Enroll Student to Courses</h2>
-                        </div>
-                        <a href="students.html" class="btn btn-light text-primary fw-semibold"><i class="bi bi-arrow-left me-1"></i> Back to Students</a>
+        <div class="container-fluid px-4 py-4">
+            <div class="bg-primary text-white rounded-3 p-4 mb-4">
+                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+                    <div>
+                        <h2 class="mb-1">Enroll Student to Courses</h2>
                     </div>
+                    <a th:href="@{/enrollment/list}" class="btn btn-light text-primary fw-semibold"><i class="bi bi-arrow-left me-1"></i> Back to Enrollments</a>
                 </div>
+            </div>
 
+            <!-- Form Wrapper for Submission -->
+            <form th:action="@{/enrollment/add}" th:method="post">
                 <div class="row g-4">
+
                     <!-- Left: Course selection -->
                     <div class="col-lg-8">
-                        <div class="card h-100">
-                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                                <span><i class="bi bi-list-check me-1"></i> Course Selection</span>
-                                <span class="text-muted small">Multi-select allowed</span>
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <span class="fw-bold text-primary"><i class="bi bi-list-check me-1"></i> Course Selection</span>
+                                <span class="badge bg-light text-secondary border">Multi-select allowed</span>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table table-hover align-middle">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 60px;">Select</th>
-                                                <th>Course Name</th>
-                                                <th class="text-end">Fee</th>
-                                            </tr>
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light text-secondary small text-uppercase">
+                                        <tr>
+                                            <th class="ps-4" style="width: 60px;">Select</th>
+                                            <th>Course Name</th>
+                                            <th class="pe-4 text-end">Fee</th>
+                                        </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td data-label="Select">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="course-1">
-                                                    </div>
-                                                </td>
-                                                <td data-label="Course Name">Web Development</td>
-                                                <td data-label="Fee" class="text-end">$1,200.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td data-label="Select">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="course-2">
-                                                    </div>
-                                                </td>
-                                                <td data-label="Course Name">Data Structures</td>
-                                                <td data-label="Fee" class="text-end">$900.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td data-label="Select">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="course-3">
-                                                    </div>
-                                                </td>
-                                                <td data-label="Course Name">Cloud Computing</td>
-                                                <td data-label="Fee" class="text-end">$1,000.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td data-label="Select">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="course-4">
-                                                    </div>
-                                                </td>
-                                                <td data-label="Course Name">Product Design</td>
-                                                <td data-label="Fee" class="text-end">$850.00</td>
-                                            </tr>
+                                        <tbody class="border-top-0">
+                                        <!-- Dynamic Course Loop -->
+                                        <tr th:each="course : ${courses}">
+                                            <td data-label="Select" class="ps-4">
+                                                <div class="form-check">
+                                                    <!-- Added course-checkbox class and data attributes for JS -->
+                                                    <input class="form-check-input course-checkbox" type="checkbox" name="courseIds"
+                                                           th:value="${course.id}"
+                                                           th:data-name="${course.courseName}"
+                                                           th:data-fee="${course.fee}">
+                                                </div>
+                                            </td>
+                                            <td th:text="${course.courseName}" data-label="Course Name" class="fw-semibold text-dark"></td>
+                                            <td th:text="'&#8377;' + ${#numbers.formatDecimal(course.fee, 1, 'COMMA', 2, 'POINT')}" data-label="Fee" class="pe-4 text-end fw-semibold text-dark"></td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <!-- Right: Student details and total -->
                     <div class="col-lg-4">
-                        <div class="card h-100">
-                            <div class="card-header bg-white">
-                                <i class="bi bi-person-check me-1"></i> Student & Summary
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-header bg-white py-3">
+                                <span class="fw-bold text-primary"><i class="bi bi-person-check me-1"></i> Student & Summary</span>
                             </div>
                             <div class="card-body d-flex flex-column gap-3">
+
+                                <!-- Optional Flash Alert for modification feedback notifications -->
+                                <div th:if="${error}" class="alert-box alert-error fade-out" role="alert" th:text="${error}"></div>
+
+                                <!-- Student Selection -->
                                 <div>
-                                    <label for="studentSelect" class="form-label">Select Student</label>
-                                    <select id="studentSelect" class="form-select mb-2">
-                                        <option value="" selected>Select a student</option>
-                                        <option>Jane Doe (jane@example.com)</option>
-                                        <option>John Smith (john@example.com)</option>
-                                        <option>Alex Johnson (alex.johnson@example.com)</option>
+                                    <label for="studentSelect" class="form-label text-muted small fw-bold">Select Student</label>
+                                    <select id="studentSelect" name="studentId" class="form-select mb-2" required>
+                                        <option value="" data-name="" data-email="" selected disabled>Select a student</option>
+                                        <!-- Added data-name and data-email to pull into the display box via JS -->
+                                        <option th:each="student : ${students}"
+                                                th:value="${student.id}"
+                                                th:data-name="${student.firstName + ' ' + student.lastName}"
+                                                th:data-email="${student.email}"
+                                                th:text="${student.firstName} + ' ' + ${student.lastName} + ' (' + ${student.email} + ')'">
+                                        </option>
                                     </select>
+
+                                    <!-- Dynamic Student Details Display -->
                                     <div class="p-3 bg-light border rounded">
                                         <div class="text-muted small">Selected Student</div>
-                                        <div class="fw-semibold mb-0">Jane Doe</div>
-                                        <div class="small text-muted">jane@example.com</div>
+                                        <div class="fw-semibold mb-0 text-dark" id="displayStudentName">--</div>
+                                        <div class="small text-muted" id="displayStudentEmail">--</div>
                                     </div>
                                 </div>
+
+                                <hr class="text-muted opacity-25 m-0">
+
+                                <!-- Dynamic Math Summary -->
                                 <div class="p-3 bg-light border rounded">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span class="text-muted">Courses Selected</span>
-                                        <strong>2</strong>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small fw-medium">Courses Selected</span>
+                                        <span class="badge bg-primary rounded-pill px-3 py-1" id="courseCount">0</span>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">Total Fee</span>
-                                        <strong class="text-primary">$2,100.00</strong>
+                                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                                        <span class="fw-bold text-dark">Total Fee</span>
+                                        <span class="fw-bold text-success fs-5" id="totalFee">&#8377;0.00</span>
                                     </div>
                                 </div>
+
+                                <!-- Dynamic Selected Courses List -->
                                 <div>
-                                    <div class="text-muted small mb-1">Selected Courses</div>
-                                    <ul class="mb-3">
-                                        <li>Web Development - $1,200.00</li>
-                                        <li>Data Structures - $900.00</li>
+                                    <div class="text-muted small fw-bold mb-2">Selected Modules</div>
+                                    <ul class="mb-4 ps-3 text-muted small" id="selectedCoursesList">
+                                        <li>No courses selected yet.</li>
                                     </ul>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <button class="btn btn-outline-secondary flex-grow-1"><i class="bi bi-arrow-left me-1"></i> Cancel</button>
-                                        <button class="btn btn-primary flex-grow-1"><i class="bi bi-check2-circle me-1"></i> Enroll</button>
+
+                                    <!-- Action Buttons -->
+                                    <div class="d-flex flex-wrap gap-2 mt-auto">
+                                        <a th:href="@{/enrollment/list}" class="btn btn-outline-secondary flex-grow-1">
+                                            <i class="bi bi-arrow-left me-1"></i> Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-primary flex-grow-1">
+                                            <i class="bi bi-check2-circle me-1"></i> Enroll
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
+
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        window.addEventListener('DOMContentLoaded', event => {
-            const sidebarToggle = document.body.querySelector('#sidebarToggle');
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', event => {
-                    event.preventDefault();
-                    document.body.classList.toggle('sb-sidenav-toggled');
-                });
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<th:block th:replace="~{fragments/layouts :: scripts}"></th:block>
+
+<!-- Custom Script for Dynamic Calculations & Display -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // 1. Dynamic Student Display Logic
+        const studentSelect = document.getElementById('studentSelect');
+        const displayStudentName = document.getElementById('displayStudentName');
+        const displayStudentEmail = document.getElementById('displayStudentEmail');
+
+        studentSelect.addEventListener('change', function() {
+            // Get the currently selected <option> element
+            const selectedOption = this.options[this.selectedIndex];
+
+            // Read the custom data attributes injected by Thymeleaf
+            const name = selectedOption.getAttribute('data-name');
+            const email = selectedOption.getAttribute('data-email');
+
+            // Update the UI
+            if (this.value) {
+                displayStudentName.textContent = name;
+                displayStudentEmail.textContent = email;
+            } else {
+                displayStudentName.textContent = '--';
+                displayStudentEmail.textContent = '--';
             }
         });
-    </script>
+
+        // 2. Dynamic Course Selection Logic
+        const checkboxes = document.querySelectorAll('.course-checkbox');
+        const totalFeeEl = document.getElementById('totalFee');
+        const courseCountEl = document.getElementById('courseCount');
+        const selectedListEl = document.getElementById('selectedCoursesList');
+
+        // Formatter for Indian Rupees (matches Thymeleaf formatting)
+        const currencyFormatter = new Intl.NumberFormat('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        function calculateSummary() {
+            let total = 0;
+            let count = 0;
+
+            // Clear the current list
+            selectedListEl.innerHTML = '';
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    // Extract values from data attributes
+                    const fee = parseFloat(cb.getAttribute('data-fee')) || 0;
+                    const name = cb.getAttribute('data-name');
+
+                    total += fee;
+                    count++;
+
+                    // Create list item for the sidebar
+                    const li = document.createElement('li');
+                    li.classList.add('mb-1', 'text-dark');
+                    li.innerHTML = `<strong>${name}</strong> - &#8377;${currencyFormatter.format(fee)}`;
+                    selectedListEl.appendChild(li);
+                }
+            });
+
+            // Display empty state if nothing is selected
+            if (count === 0) {
+                const emptyLi = document.createElement('li');
+                emptyLi.textContent = 'No courses selected yet.';
+                selectedListEl.appendChild(emptyLi);
+            }
+
+            // Update the numeric totals in the UI
+            courseCountEl.textContent = count;
+            totalFeeEl.innerHTML = `&#8377;${currencyFormatter.format(total)}`;
+        }
+
+        // Attach change listeners to every checkbox
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', calculateSummary);
+        });
+
+        // Run calculation on load in case the browser cached checked boxes
+        calculateSummary();
+    });
+</script>
 </body>
 
 </html>

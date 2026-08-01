@@ -1,5 +1,6 @@
 package com.sky.studentmanagement.service.impl;
 
+import com.sky.studentmanagement.dto.CourseDto;
 import com.sky.studentmanagement.dto.StudentDto;
 import com.sky.studentmanagement.dto.StudentModifyDto;
 import com.sky.studentmanagement.exception.CustomException;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -114,5 +118,15 @@ public class StudentServiceImpl implements StudentService {
     public boolean existsByPhoneAndIdNot(String phone, Long id) {
         logger.info("Phone duplication validation service for modify student called.");
         return studentRepo.existsByPhoneIgnoreCaseAndIdNot(phone, id);
+    }
+
+    @Override
+    public List<StudentDto> getAllStudentsList() {
+        logger.info("Get all students List service called.");
+        List<StudentDto> students = studentRepo.findByActiveTrue(Sort.by("firstName", "lastName")).stream()
+                .map(student -> new StudentDto(student.getId(), student.getFirstName(), student.getLastName(), student.getEmail(), student.getPhone(),student.isActive()))
+                .collect(Collectors.toList());
+
+        return students;
     }
 }

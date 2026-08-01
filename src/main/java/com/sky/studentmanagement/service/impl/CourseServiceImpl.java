@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -108,6 +109,16 @@ public class CourseServiceImpl implements CourseService {
                 .fee(course.getFee())
                 .description(course.getDescription())
                 .build();
+    }
+
+    @Override
+    public List<CourseDto> getAllCoursesList() {
+        logger.info("Get all courses List service called.");
+        List<CourseDto> courses = courseRepo.findByActiveTrue(Sort.by("courseName")).stream()
+                .map(course -> new CourseDto(course.getId(), course.getCourseName(), course.getCourseCode(), course.getDuration(), course.isActive(), course.getFee(), course.getDescription()))
+                .collect(Collectors.toList());
+
+        return courses;
     }
 
     @Override

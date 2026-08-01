@@ -2,21 +2,19 @@ package com.sky.studentmanagement.controller;
 
 import com.sky.studentmanagement.dto.EnrollmentDto;
 import com.sky.studentmanagement.dto.EnrollmentViewDto;
-import com.sky.studentmanagement.dto.StudentDto;
-import com.sky.studentmanagement.dto.StudentModifyDto;
-import com.sky.studentmanagement.exception.CustomException;
+import com.sky.studentmanagement.service.CourseService;
 import com.sky.studentmanagement.service.EnrollmentService;
 import com.sky.studentmanagement.service.StudentService;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/enrollment")
@@ -27,8 +25,16 @@ public class EnrollmentController {
     @Autowired
     private final EnrollmentService enrollmentService;
 
-    public EnrollmentController(EnrollmentService enrollmentService) {
+    @Autowired
+    private final CourseService courseService;
+
+    @Autowired
+    private final StudentService studentService;
+
+    public EnrollmentController(EnrollmentService enrollmentService, CourseService courseService, StudentService studentService) {
         this.enrollmentService = enrollmentService;
+        this.courseService = courseService;
+        this.studentService = studentService;
     }
 
 
@@ -47,43 +53,32 @@ public class EnrollmentController {
     @GetMapping("/add")
     public String showEnrollStudent(Model model){
         log.info("Get /enrollment/add - showing add enrollment page.");
-//        model.addAttribute("student", new StudentDto());
+        model.addAttribute("courses", courseService.getAllCoursesList());
+        model.addAttribute("students", studentService.getAllStudentsList());
         return "enroll-course";
     }
-//
-//    @PostMapping("/add")
-//    public String addCourse(@Valid @ModelAttribute(name = "student") StudentDto student,
-//                            BindingResult result,
-//                            RedirectAttributes redirectAttributes,
-//                            Model model) throws CustomException.AttributeException {
-//        log.info("Post /student/add - add student request received.");
-//        if(result.hasErrors()){
-//            log.info("Post /student/add - page return due to validation error.");
-//            result.getFieldErrors().forEach(error -> {
-//                log.error("Field: " + error.getField() + " Rejected: " + error.getRejectedValue() + " Error: " + error.getDefaultMessage());
-//            });
-//            return "add-student";
-//        }
-//
-//        if(studentService.existsByEmailAndIdNot(student.getEmail(), student.getId())){
-//            log.info("Put /course/{}/edit - page return because student exists with the given email.", student.getId());
-//            result.rejectValue("email", "student.email.exists");
-//            return "add-student";
-//        }
-//
-//        if(studentService.existsByPhoneAndIdNot(student.getPhone(), student.getId())){
-//            log.info("Put /course/{}/edit - page return because student exists with the given phone.", student.getId());
-//            student.setId(student.getId());
-//            result.rejectValue("phone", "student.phone.exists");
-//            return "add-student";
-//        }
-//
-//
-//        studentService.addStudent(student);
-//        redirectAttributes.addFlashAttribute("message" , "Student added successfully!");
-//        return "redirect:/student/list";
-//    }
-//
+
+    @PostMapping("/add")
+    public String addEnrollment(
+                            @RequestParam("studentId") Long studentId,
+                            @RequestParam(value = "courseIds", required = false) List<Long> courseIds,
+                            RedirectAttributes redirectAttributes) {
+        log.info("Post /enrollment/add - add enrollment request received.");
+
+        if(courseIds == null || courseIds.isEmpty()){
+            redirectAttributes.addFlashAttribute("error", "Please select at least one course to enroll.");
+            return "redirect:/enrollment/add";
+        }
+
+        try{
+            enrollmentService.enrollStudent(studentId, courseIds);
+            redirectAttributes.addFlashAttribute("message", "Student successfully enrolled in courses!");
+        }catch (Exception e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/enrollment/list";
+    }
+
     @GetMapping("/{id}")
     public String getEnrollment(@PathVariable Long id,
                                 Model model){
@@ -93,58 +88,4 @@ public class EnrollmentController {
 
         return "enrollment-details";
     }
-//
-//    @GetMapping("/{id}/edit")
-//    public String editCourse(@PathVariable Long id,
-//                             Model model){
-//        log.info("Get student/{}/edit - view request to edit the student received.", id);
-//        StudentDto student = studentService.getStudentById(id);
-//        model.addAttribute("student", student);
-//
-//        return "edit-student";
-//    }
-//
-//    @PutMapping("/{id}/edit")
-//    public String editCourseById(@PathVariable Long id,
-//                                 @ModelAttribute(name = "student") StudentModifyDto student,
-//                                 BindingResult result,
-//                                 RedirectAttributes redirectAttributes,
-//                                 Model model){
-//
-//        log.info("Put /student/{id}/edit - edit request to the student received.");
-//
-//        if(result.hasErrors()){
-//            log.info("Put /student/{}/edit - page return due to validation error.", id);
-//            student.setId(id);
-//            return "edit-student";
-//        }
-//
-//        if(studentService.existsByEmailAndIdNot(student.getEmail(), id)){
-//            log.info("Put /course/{}/edit - page return because student exists with the given email.", id);
-//            student.setId(id);
-//            result.rejectValue("email", "student.email.exists");
-//            return "edit-student";
-//        }
-//
-//        if(studentService.existsByPhoneAndIdNot(student.getPhone(), id)){
-//            log.info("Put /course/{}/edit - page return because student exists with the given phone.", id);
-//            student.setId(id);
-//            result.rejectValue("phone", "student.phone.exists");
-//            return "edit-student";
-//        }
-//
-//        student.setId(id);
-//        StudentDto newStudent = studentService.editStudentById(student);
-//
-//        if(!newStudent.isActive()){
-//            log.info("Student disabled: " + id);
-//            redirectAttributes.addFlashAttribute("message", "Student disabled successfully.");
-//            return "redirect:/student/list";
-//        }
-//
-//        redirectAttributes.addFlashAttribute("message", "Student modified successfully.");
-//        log.info("Student modified successfully with id: "+id);
-//
-//        return "redirect:/student/list";
-//    }
 }
