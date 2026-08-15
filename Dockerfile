@@ -7,7 +7,7 @@ ENV MAVEN_OPTS="-Xmx450m"
 RUN mvn clean package -DskipTests -e
 
 # Stage 2: Runtime
-FROM eclipse-temurin:24-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 6969
