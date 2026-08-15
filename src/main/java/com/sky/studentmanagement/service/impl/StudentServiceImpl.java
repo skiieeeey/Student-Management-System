@@ -39,7 +39,7 @@ public class StudentServiceImpl implements StudentService {
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
 
-        Page<StudentDto> result =  studentRepo.findByActiveTrue(pageRequest)
+        Page<StudentDto> result = studentRepo.findByActiveTrue(pageRequest)
                 .map(student -> new StudentDto(student.getId(), student.getFirstName(), student.getLastName(), student.getEmail(), student.getPhone(), student.isActive()));
 
         return result;
@@ -128,5 +128,12 @@ public class StudentServiceImpl implements StudentService {
                 .collect(Collectors.toList());
 
         return students;
+    }
+
+    @Override
+    public long getStats() {
+        logger.info("Get dashboard stats service method.");
+        System.out.println(studentRepo.count());
+        return studentRepo.count();
     }
 }

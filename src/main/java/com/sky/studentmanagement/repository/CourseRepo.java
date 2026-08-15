@@ -19,4 +19,6 @@ public interface CourseRepo extends JpaRepository<Courses, Long> {
     Page<Courses> findByActiveTrue(Pageable pageable);
 
     List<Courses> findByActiveTrue(Sort sort);
+
+    long countByActiveTrue();
 }

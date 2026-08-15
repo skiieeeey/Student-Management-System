@@ -1,6 +1,5 @@
 package com.sky.studentmanagement.service.impl;
 
-import com.sky.studentmanagement.dto.CourseDto;
 import com.sky.studentmanagement.dto.EnrollmentCourseDto;
 import com.sky.studentmanagement.dto.EnrollmentDto;
 import com.sky.studentmanagement.dto.EnrollmentViewDto;
@@ -25,7 +24,6 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

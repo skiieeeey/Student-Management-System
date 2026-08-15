@@ -23,9 +23,4 @@ public class AuthController {
 //        model.addAttribute("message", "login successfully.");
         return "login";
     }
-
-    @GetMapping("/dashboard")
-    public String dashboard(){
-        return "dashboard";
-    }
 }

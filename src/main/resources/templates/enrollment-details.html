@@ -93,15 +93,15 @@
                                         <tr th:each="course : ${enrollment.courseJsonList}">
                                             <!-- Course Name Column -->
                                             <td class="ps-4">
-                                                <span class="fw-bold text-dark" th:text="${course.courseName}">Java Programming</span>
+                                                <span class="fw-bold text-dark" th:text="${course.courseName}"></span>
                                             </td>
                                             <!-- Description Column -->
                                             <td>
-                                                <span class="text-muted small" th:text="${course.description != null ? course.description : 'N/A'}">Course description</span>
+                                                <span class="text-muted small" th:text="${course.description != null ? course.description : 'N/A'}"></span>
                                             </td>
                                             <!-- Fee Column -->
                                             <td class="pe-4 text-end">
-                                                <span class="fw-semibold text-dark" th:text="'&#8377;' + ${#numbers.formatDecimal(course.fee, 1, 'COMMA', 2, 'POINT')}">&#8377;0.00</span>
+                                                <span class="fw-semibold text-dark" th:text="'&#8377;' + ${#numbers.formatDecimal(course.fee, 1, 'COMMA', 2, 'POINT')}"></span>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -109,7 +109,7 @@
                                     <tfoot class="table-light border-top">
                                     <tr>
                                         <td colspan="2" class="ps-4 text-end fw-bold text-secondary">Total Fee:</td>
-                                        <td class="pe-4 text-end fw-bold text-dark" th:text="'&#8377;' + ${#numbers.formatDecimal(enrollment.totalFee, 1, 'COMMA', 2, 'POINT')}">&#8377;0.00</td>
+                                        <td class="pe-4 text-end fw-bold text-dark" th:text="'&#8377;' + ${#numbers.formatDecimal(enrollment.totalFee, 1, 'COMMA', 2, 'POINT')}"></td>
                                     </tr>
                                     </tfoot>
                                 </table>

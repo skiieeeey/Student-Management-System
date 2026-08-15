@@ -24,4 +24,6 @@ public interface StudentService {
     boolean existsByPhoneAndIdNot(String phone, Long id);
 
     List<StudentDto> getAllStudentsList();
+
+    long getStats();
 }

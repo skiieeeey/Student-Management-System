@@ -1,5 +1,6 @@
 package com.sky.studentmanagement.repository;
 
+import com.sky.studentmanagement.dto.DashboardListDto;
 import com.sky.studentmanagement.dto.projections.EnrollmentProjection;
 import com.sky.studentmanagement.dto.projections.EnrollmentViewProjection;
 import com.sky.studentmanagement.model.Enrollment;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -48,4 +50,38 @@ public interface EnrollmentRepo extends JpaRepository<Enrollment, Long> {
     EnrollmentViewProjection findByStudentSummaryById(@Param("student_id") Long id);
 
     List<Enrollment> findByStudentId(Long studentId);
+
+    @Query( "SELECT c.courseCode, COUNT(e) " +
+            "FROM Enrollment e " +
+            "JOIN e.course c " +
+            "GROUP BY c.courseCode " +
+            "ORDER BY COUNT(e) DESC")
+    List<Object[]> findTopCourse(Pageable pageable);
+
+
+    @Query("SELECT COUNT(e) " +
+            "FROM Enrollment e " +
+            "WHERE e.enrolledAt BETWEEN :startOfDay AND :endOfDay")
+    long countTodayEnrollments(@Param("startOfDay") LocalDateTime startOfDay,
+                               @Param("endOfDay") LocalDateTime endOfDay);
+
+    @Query("SELECT COUNT(e) " +
+            "FROM Enrollment e " +
+            "WHERE e.enrolledAt BETWEEN :startOfMonth AND :endOfMonth")
+    long countMonthEnrollments(@Param("startOfMonth") LocalDateTime startOfMonth,
+                               @Param("endOfMonth") LocalDateTime endOfMonth);
+
+
+    @Query("SELECT new com.sky.studentmanagement.dto.DashboardListDto(" +
+            "s.id, " +
+            "CONCAT(s.firstName, ' ', s.lastName), " +
+            "CONCAT(UPPER(SUBSTRING(s.firstName, 1, 1)), UPPER(SUBSTRING(s.lastName, 1, 1))), " +
+            "c.courseName, " +
+            "CAST(DATE(e.enrolledAt) AS java.time.LocalDate), " +
+            "c.duration) " +
+            "FROM Enrollment e " +
+            "JOIN e.student s " +
+            "JOIN e.course c " +
+            "ORDER BY e.enrolledAt DESC")
+    Page<DashboardListDto> getAllRecentEnrollments(Pageable pageable);
 }

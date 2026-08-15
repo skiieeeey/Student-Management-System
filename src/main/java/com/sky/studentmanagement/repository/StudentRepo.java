@@ -21,4 +21,6 @@ public interface StudentRepo extends JpaRepository<Students, Long> {
     boolean existsByPhoneIgnoreCaseAndIdNot(String phone, Long id);
 
     List<Students> findByActiveTrue(Sort sort);
+
+    long countByActiveTrue();
 }
