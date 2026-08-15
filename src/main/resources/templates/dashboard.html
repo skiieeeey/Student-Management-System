@@ -39,6 +39,7 @@
             </div>
 
             <!-- Modern Stats Cards Grid -->
+            <!-- Modern Stats Cards Grid -->
             <div class="row g-3 mb-4">
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card border-0 shadow-sm rounded-3 h-100 stat-card">
@@ -46,8 +47,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="text-muted small fw-semibold text-uppercase tracking-wider">Total Students</span>
-                                    <h3 th:text="${stats.totalStudents}" class="fw-bold text-dark my-1"></h3>
-<!--                                    <span class="text-success small fw-medium"><i class="bi bi-arrow-up-short"></i>+12% this month</span>-->
+                                    <h3 th:text="${stats?.totalStudents ?: 0}" class="fw-bold text-dark my-1">0</h3>
                                 </div>
                                 <div class="stat-icon bg-primary-subtle text-primary rounded-3 p-3">
                                     <i class="bi bi-people fs-4"></i>
@@ -63,8 +63,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="text-muted small fw-semibold text-uppercase tracking-wider">Active Courses</span>
-                                    <h3 th:text="${stats.totalCourses}" class="fw-bold text-dark my-1"></h3>
-<!--                                    <span class="text-muted small">4 departments</span>-->
+                                    <h3 th:text="${stats?.totalCourses ?: 0}" class="fw-bold text-dark my-1">0</h3>
                                 </div>
                                 <div class="stat-icon bg-success-subtle text-success rounded-3 p-3">
                                     <i class="bi bi-book fs-4"></i>
@@ -80,8 +79,8 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="text-muted small fw-semibold text-uppercase tracking-wider">Top Course</span>
-                                    <h3 th:text="${stats.topCourse.key}" class="fw-bold text-dark my-1"></h3>
-                                    <span th:text="${stats.topCourse.value} + ' Enrolled'" class="text-muted small"></span>
+                                    <h3 th:text="${stats?.topCourse?.key ?: 'N/A'}" class="fw-bold text-dark my-1">N/A</h3>
+                                    <span th:text="${(stats?.topCourse?.value ?: 0) + ' Enrolled'}" class="text-muted small">0 Enrolled</span>
                                 </div>
                                 <div class="stat-icon bg-warning-subtle text-warning-emphasis rounded-3 p-3">
                                     <i class="bi bi-trophy fs-4"></i>
@@ -97,8 +96,8 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="text-muted small fw-semibold text-uppercase tracking-wider">New Registrations</span>
-                                    <h3 th:text="${stats.newRegistrations.key}" class="fw-bold text-dark my-1"></h3>
-                                    <span th:text="'+' + ${stats.newRegistrations.value} + ' today'" class="text-success small fw-medium"><i class="bi bi-arrow-up-short"></i></span>
+                                    <h3 th:text="${stats?.newRegistrations?.key ?: 0}" class="fw-bold text-dark my-1">0</h3>
+                                    <span th:text="${'+' + (stats?.newRegistrations?.value ?: 0) + ' today'}" class="text-success small fw-medium"><i class="bi bi-arrow-up-short"></i></span>
                                 </div>
                                 <div class="stat-icon bg-info-subtle text-info-emphasis rounded-3 p-3">
                                     <i class="bi bi-person-plus fs-4"></i>
@@ -121,39 +120,41 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light border-bottom border-top-0">
-                                <tr class="text-uppercase text-muted fs-7">
-                                    <th class="ps-4">Student ID</th>
-                                    <th>Name</th>
-                                    <th>Course</th>
-                                    <th>Enroll Date</th>
-                                    <th>Duration</th>
-<!--                                    <th class="pe-4 text-end">Actions</th>-->
-                                </tr>
+                            <tr class="text-uppercase text-muted fs-7">
+                                <th class="ps-4">Student ID</th>
+                                <th>Name</th>
+                                <th>Course</th>
+                                <th>Enroll Date</th>
+                                <th>Duration</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="dashboard : ${dashboardList}">
-                                    <td th:text="${dashboard.studentId}" class="ps-4 fw-semibold text-secondary"></td>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div th:text="${dashboard.nameAcronym}" class="avatar-sm bg-light text-primary rounded-circle fw-bold small d-flex align-items-center justify-content-center" style="width:28px; height:28px;"></div>
-                                            <span th:text="${dashboard.fullName}" class="fw-semibold text-dark"></span>
-                                        </div>
-                                    </td>
-                                    <td><span th:text="${dashboard.courseName}" class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill"></span></td>
-                                    <td th:text="${dashboard.enrolledAt}" class="text-muted"></td>
-                                    <td th:text="${dashboard.duration}" class="text-muted"></td>
-<!--                                    <td class="pe-4 text-end">-->
-<!--                                        <div class="btn-group btn-group-sm">-->
-<!--                                            <button class="btn btn-light border text-secondary" title="View"><i class="bi bi-eye"></i></button>-->
-<!--                                            <button class="btn btn-light border text-primary" title="Edit"><i class="bi bi-pencil"></i></button>-->
-<!--                                        </div>-->
-<!--                                    </td>-->
-                                </tr>
+                            <!-- Display Table Data -->
+                            <tr th:each="dashboard : ${dashboardList}">
+                                <td th:text="${dashboard.studentId}" class="ps-4 fw-semibold text-secondary"></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div th:text="${dashboard.nameAcronym}" class="avatar-sm bg-light text-primary rounded-circle fw-bold small d-flex align-items-center justify-content-center" style="width:28px; height:28px;"></div>
+                                        <span th:text="${dashboard.fullName}" class="fw-semibold text-dark"></span>
+                                    </div>
+                                </td>
+                                <td><span th:text="${dashboard.courseName}" class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill"></span></td>
+                                <td th:text="${dashboard.enrolledAt}" class="text-muted"></td>
+                                <td th:text="${dashboard.duration}" class="text-muted"></td>
+                            </tr>
+
+                            <!-- Empty State Row -->
+                            <tr th:if="${dashboardList == null || dashboardList.isEmpty()}">
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    No recent registrations found.
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="card-footer bg-white border-top py-3 px-4" th:if="${dashboardList != null && !dashboardList.content.isEmpty()}">
+                    <!-- Card Footer: Condition fixed to allow zero-element notice -->
+                    <div class="card-footer bg-white border-top py-3 px-4" th:if="${dashboardList != null}">
                         <div th:object="${dashboardList}" class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2">
 
                             <!-- Safe Entry Summary Text -->
@@ -167,7 +168,7 @@
                                 No entries found
                             </span>
 
-                            <!-- Multi-Page Pagination Controller (Shows 2 numbers at a time) -->
+                            <!-- Multi-Page Pagination Controller -->
                             <nav th:if="${dashboardList.totalPages > 1}" aria-label="Enrollment database directory navigation controller">
                                 <ul class="pagination pagination-sm mb-0"
                                     th:with="currentPage=${dashboardList.number},
